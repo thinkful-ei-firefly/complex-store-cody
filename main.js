@@ -22,8 +22,8 @@ function generateItemElement(item) {
     <li data-item-id="${item.id}">
       <span class="shopping-item js-shopping-item ${item.checked ? 'shopping-item__checked' : ''}">
       ${STORE.editing === item.id ?
-      `<form>
-        <input type="text" name="edit-name" class="js-edit-search" value="${item.name}">
+      `<form class="js-edit-form">
+        <input type="text" name="edit-name" class="js-edit-input" value="${item.name}">
         </form>`
       : item.name}</span>
       <div class="shopping-item-controls">
@@ -127,7 +127,12 @@ function toggleSearchTerm() {
 function toggleEditItem(itemId) {
   // const itemIndex = STORE.items.findIndex(item => item.id === itemId);
   STORE.editing = itemId;
+}
 
+function editItemName(newName){
+  const itemIndex = STORE.items.findIndex(item => item.id === STORE.editing);
+  STORE.items[itemIndex].name = newName;
+  STORE.editing = null;
 }
 
 // ------------------ listener's
@@ -184,35 +189,29 @@ function handleSearchClicked() {
 
 function handleClearSearchClicked() {
   $('#search-form-clear').click(() => {
-    $('.js-search-term').val('');
-    toggleSearchTerm();
-    renderShoppingList();
+    if ($('.js-search-term').val() !== '') {
+      $('.js-search-term').val('');
+      toggleSearchTerm();
+      renderShoppingList();
+    }
   });
 }
 
 function handleEditClicked() {
   $('.js-shopping-list').on('click', '.js-edit-item', (e) => {
-    //console.log('`handleEditClicked` ran');
-    console.log(e.currentTarget.closest('li'));
     const id = getItemIdFromElement(e.currentTarget);
     toggleEditItem(id);
     renderShoppingList();
-    // let itemHtml = $(e.currentTarget).closest('li').find('.js-shopping-item');
-    // console.log(parent.text());
   });
 }
 
-function handleEditPressEnter(){
-  $('.js-shopping-list').on('keypress', (e) =>{
-    console.log('pressed: ', e.keyCode);
-    if (e.keyCode === '13'){
-      e.preventDefault();
-      const editedName = $('.js-edit-search').val();
-      console.log(editedName);
-    }
+function handleEditPressEnter() {
+  $('.js-shopping-list').on('submit', '.js-edit-form', (e) => {
+    e.preventDefault();
+    const newName = $('.js-edit-input').val();
+    editItemName(newName);
+    renderShoppingList();
   });
-  STORE.editing = null;
-  renderShoppingList();
 }
 
 
