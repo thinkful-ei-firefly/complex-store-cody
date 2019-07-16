@@ -33,7 +33,7 @@ function generateItemElement(item) {
         <button class="shopping-item-delete js-item-delete">
             <span class="button-label">delete</span>
         </button>
-        <button class="shopping-item-edit js-edit-item">
+        <button class="shopping-item-edit js-edit-item" ${STORE.editing ? 'disabled': ''}>
           <span class="button-label">edit</span>
         </button>
       </div>
